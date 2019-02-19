@@ -1,27 +1,58 @@
-# DiApp
+# Angular2 what need to know about dependency injection
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.1.0.
+## Part 1 
 
-## Development server
+###### For create injection token use InjectionToken class
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Simple example:
+```typescript
+export const TEST_FACTORY_TOKEN = new InjectionToken<TestAService>('TestAService:app');
+```
+
+Extended example:
+
+```typescript
+// Is example how to crate token with assign factory for that token and use 'providedIn' way.
+export const TEST_SERVICE = new InjectionToken<TestService>('TestService:app', {
+  providedIn: 'root',
+  factory: () => new TestService(inject(TestAService))
+});
+```
+
+Also you can use predefined system tokens
+
+ PLATFORM_INITIALIZER: Callback is invoked when a platform is initialized.  
+ APP_BOOTSTRAP_LISTENER: Callback is invoked for each component that is bootstrapped. The handler function receives the ComponentRef instance of the bootstrapped component. <br>
+ APP_INITIALIZER: Callback is invoked before an app is initialized. All registered initializers can optionally return a Promise. All initializer functions that return Promises must be resolved before the application is bootstrapped. If one of the initializers fails to resolves, the application is not bootstrapped. 
+
+###### Ways to add new providers
+
+Generally add new provider looks like section below.
+
+```typescript
+{ 'token', 'option for getting DI instace' }
+```
+
+Examples:
+
+```typescript
+{ provide: TestAService, useClass: TestAService }, // This is simple way to declare Dependency throuth class.
+
+// TestAService, Also you can use just class name. This is shortcut version
+
+// { provide: TEST_SERVICE_ALIAS, useClass: TestService } This is not alias
+{ provide: TEST_SERVICE_ALIAS, useExisting: TEST_SERVICE }, // TEST_SERVICE_ALIAS is alias TEST_SERVICE
+{ provide: CONFIG_TOKEN, useValue: CONFIG }, // If you are need just value
+{ provide: TEST_FACTORY_TOKEN, useFactory: factory }, // If use factory you can add some logic before obtain dependency instance
+```
+
+###### Example how to use Di in Controllers
+
+```typescript
+constructor(
+    @Inject(TEST_FACTORY_TOKEN) private testAService: TestAService, // if you create own token
+    // use just testAService: TestAService - is you use class and @Injectable decorator 
+)
+```
 
 ## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
