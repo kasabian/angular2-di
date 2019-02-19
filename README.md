@@ -1,4 +1,4 @@
-# Angular2 what need to know about dependency injection
+# Angular2 dependency injection
 
 ## Part 1 
 
@@ -55,4 +55,4 @@ constructor(
 )
 ```
 
-## Code scaffolding
+## Part 2
