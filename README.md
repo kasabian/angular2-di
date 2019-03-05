@@ -56,3 +56,86 @@ constructor(
 ```
 
 ## Part 2
+
+###### How to Angular is resolving dependencies. Example StaticInjector service. 
+How to Angular is known about dependencies in services. Ingector service is using inside StaticInjector service for resolving dependencies.
+```typescript
+class C {
+
+  name = 'C';
+
+}
+
+class B {
+  name = 'B';
+
+  constructor(c) {}
+}
+
+class A {
+
+  name = 'A';
+
+  constructor(b) {}
+}
+
+  const i = Injector.create([
+      {provide: C, useClass: C, deps: []},
+      {provide: B, useClass: B, deps: [C]},
+      {provide: A, useClass: A, deps: [B]}
+    ]);
+
+    // A -> B -> C
+```
+
+###### Hierarchical Injectors
+
+The Angular dependency injection system is hierarchical. There is a tree of injectors that parallels an app's component tree. You can get ViewContainerRef instance for to see that. 
+ViewContainerRef contains inside injector method and parentInjector service. <br>
+You can get any service instance from tree position. Using decorators like this.
+
+```typescript
+  constructor(
+    @Inject(TEST_FACTORY_TOKEN) private testAService: TestAService,
+    private vcRef: ViewContainerRef,
+
+   @SkipSelf()
+    private randomizeServices: RandomizeService,
+
+   @Host()
+   private randomizeServicesAlias: RandomizeService
+    // private injector: Injector
+  ) {
+```
+
+or create token alias:
+
+```typescript
+{ provide: RANDOMIZE_SERVICE_ALIAS, useExisting: forwardRef(() => RandomizeService) }
+```
+
+Also use forwardRef for solve cyclic dependencies.
+
+###### Injectors assign to element not to component
+
+See to example below:
+
+```html
+<app-test appTestDirective
+          *ngIf="isHide"
+></app-test>
+```
+
+appTestDirective and app-test compoent have common providers. That's why from directive you can get access to component providers.
+
+###### Injector instance is living when still alive component
+
+Injector instance is living when still alive component. If component was destroyed Injector instance and providers will be destroyed too. <br />
+
+For Example use *ngIf construction as you can see below.
+
+```html
+<app-test appTestDirective
+          *ngIf="isHide"
+></app-test>
+```
