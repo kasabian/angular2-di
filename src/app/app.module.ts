@@ -3,10 +3,12 @@ import {APP_INITIALIZER, NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {TestService} from './test.service';
+import {TestService} from './services/test.service';
 import {CONFIG, CONFIG_TOKEN, TEST_FACTORY_TOKEN, TEST_SERVICE, TEST_SERVICE_ALIAS} from './tokens';
-import {TestAService} from './test-a.service';
+import {TestAService} from './services/test-a.service';
 import {TestComponent} from './test/test.component';
+import { RandomizeService } from './services/randomize.service';
+import { TestDirectiveDirective } from './test/test-directive.directive';
 
 export function factory() {
   return new TestAService();
@@ -19,7 +21,8 @@ export function factoryTestService(testAService) {
 @NgModule({
   declarations: [
     AppComponent,
-    TestComponent
+    TestComponent,
+    TestDirectiveDirective
   ],
   imports: [
     BrowserModule,
@@ -38,6 +41,7 @@ export function factoryTestService(testAService) {
     { provide: TEST_SERVICE_ALIAS, useExisting: TEST_SERVICE }, // TEST_SERVICE_ALIAS is alias TEST_SERVICE
     { provide: CONFIG_TOKEN, useValue: CONFIG }, // If you are need just value
     { provide: TEST_FACTORY_TOKEN, useFactory: factory }, // If use factory you can add some logic before obtain dependency instance
+    RandomizeService
   ],
   bootstrap: [AppComponent]
 })

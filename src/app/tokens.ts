@@ -1,6 +1,6 @@
 import {inject, InjectionToken} from '@angular/core';
-import {TestService} from './test.service';
-import {TestAService} from './test-a.service';
+import {TestService} from './services/test.service';
+import {TestAService} from './services/test-a.service';
 
 export interface IConf {
   url: string;
